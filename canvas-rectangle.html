@@ -1,0 +1,99 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+	<title>Canvas test</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<style>
+		#test-canvas1 {
+			background: #E0E0E0;
+			position: relative;
+			left: 50%;
+			margin-left: -187.5px;
+		}
+	</style>
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+	<canvas id="test-canvas1" width="375" height="500"></canvas>
+	<script>
+		var canvas = document.querySelector("#test-canvas1"),
+		context = canvas.getContext("2d"),
+		colorMap = {
+					"g": "#4CAF50",
+					"lg": "#8BC34A",
+					"r": "#F44336",
+					"gr": "#212121",
+					"b": "#607D8B",
+					"lgr": "EEEEEE"
+					};
+		rectArray = [
+					[0,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,0],
+					[colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg],
+					[colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g,colorMap.g],
+					[colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg, colorMap.lg],
+					[0,0,colorMap.gr,colorMap.gr, colorMap.gr, colorMap.gr, colorMap.gr, 0, 0]
+					 ];
+		
+		var block, 
+			blockWidth = 30,
+			blockHeight = 20,
+			posX = blockWidth,
+			posY = 20;
+			
+		var pad,
+			padWidth = 100,
+			padHeight = 20, 
+			padPosX = (canvas.width / 2) - padWidth / 2,
+			padPosY = canvas.height - padHeight;
+			
+		var ball,
+			ballWidth = 5,
+			ballHeight = 5,
+			ballPosX = (canvas.width / 2) - ballWidth / 2,
+			ballPosY = canvas.height - padHeight - ballHeight - 1;
+			
+		for (var i = 0; i < rectArray.length; i++){
+			for (var j = 0; j < rectArray[i].length; j++){
+					if (rectArray[i][j] != 0){
+						color = rectArray[i][j];
+						block = new GenerateRect({x: posX, y: posY, color: color});
+					}
+					posX = posX + 35;
+					if (j === rectArray[i].length - 1){
+						posY = posY + 35;
+						posX = blockWidth;
+					}
+			};
+		}
+		
+		var pad = new GeneratePad({x: padPosX, y: padPosY, color: colorMap.b});
+		var ball = new GenerateBall({x: ballPosX, y: ballPosY, color: colorMap.r});
+		
+		function GenerateRect(rectobj){
+			context.beginPath();
+			context.rect(rectobj.x, rectobj.y, blockWidth, blockHeight);
+			context.fillStyle = rectobj.color;
+			context.fill();
+		}
+		
+		function GeneratePad(padobj){
+			context.beginPath();
+			context.rect(padobj.x, padobj.y, padWidth, padHeight);
+			context.fillStyle = padobj.color;
+			context.fill();			
+		}
+		
+		function GenerateBall(ballobj){
+			context.beginPath();
+			context.rect(ballobj.x, ballobj.y, ballWidth, ballHeight);
+			context.fillStyle = ballobj.color;
+			context.fill();			
+		}
+		
+	</script>
+</body>
+</html>
