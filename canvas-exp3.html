@@ -1,0 +1,90 @@
+<!doctype>
+<html>
+<head>
+	<style>
+		* { margin:0; padding:0; }
+		html, body { width:100%; height:100%; }
+		canvas { display:block; background: #000000;}
+	</style>
+</head>
+<body>
+	<canvas id="draw"></canvas>
+<script>
+	function drawBoard(){
+		this.canvas = document.querySelector("#draw");
+		this.context = this.canvas.getContext("2d");
+		this.color = this.randomizeColor(255);
+		this.context.fillStyle = "rgba(" + this.color + ",1.0)";
+		this.brushSize = 5;
+
+		this.init();
+		this.resizeCanvas();
+	}
+	drawBoard.prototype = {
+		init: function(){
+			this.listeners();
+		},
+		resizeCanvas: function (){
+			console.log("resize");
+			this.canvas.width = window.innerWidth;
+			this.canvas.height = window.innerHeight;
+		},
+		listeners: function(){
+			document.addEventListener("mousedown", this.onMouseDown.bind(this), false);
+			document.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+			document.addEventListener("mouseup", this.onMouseUp.bind(this), false);
+			window.addEventListener("resize", this.resizeCanvas.bind(this), true)
+		},
+		draw: function(mouseX,mouseY){
+			this.context.fillRect(mouseX, mouseY, 5 , 5);
+			this.context.fillStyle = "rgba(" + this.color + ",1.0)";
+			var drawTimeout = setTimeout(this.animatePixels.bind(this, mouseX, mouseY), 1500);
+		},
+		animatePixels: function(x,y){
+			var fadeColor = 1,
+			animateBrush = 0;
+
+			var animate = setInterval(function(x,y){
+				this.context.clearRect(x, y, this.brushSize , this.brushSize);
+				this.context.fillStyle = "rgba(" + this.color + "," + fadeColor + ")";
+				this.context.fillRect(x, y, this.brushSize , this.brushSize);
+				animateBrush += 1;
+				fadeColor = (fadeColor < 0) ? 0 : fadeColor - 0.05;
+				if (animateBrush > 30){
+					clearInterval(animate);
+				}
+			}.bind(this, x, y), 30);
+		},
+		onMouseUp: function(){
+			this.mouseIsDown = false;
+		},
+		randomizeColor: function(val){
+			var rgb = {r: '', g: '', b:''};
+			for (color in rgb){
+				rgb[color] = Math.floor(Math.random() * val);
+			}
+
+			return rgb.r + "," + rgb.g + "," + rgb.b;
+		},
+		onMouseDown: function(e){
+			var startX = e.clientX - this.canvas.offsetLeft,
+				startY = e.clientY - this.canvas.offsetTop;
+
+			this.color = this.randomizeColor(255);
+			this.draw(startX, startY);
+			this.mouseIsDown = true;
+		},
+		onMouseMove: function(e){
+			if (this.mouseIsDown){
+				var startX, startY;
+					startX = e.clientX - this.canvas.offsetLeft;
+					startY = e.clientY - this.canvas.offsetTop;
+					this.draw(startX, startY);
+				}
+		}
+	}
+
+	var drawBoardApp = new drawBoard();
+</script>
+</body>
+</html>
